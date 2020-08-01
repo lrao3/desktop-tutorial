@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style> /* set the CSS */
+
+.bar { fill: steelblue; }
+
+.tooltip{
+      position      : absolute;
+      text-align    : center;
+      max-width     : 70px;
+      max-height    : 30px;
+      padding       : 8px;
+      border        : none;
+      border-radius : 8px;
+      margin-top    : -30px;
+      font          : 10px sans-serif;
+      background    : black;
+      color         : white;
+      pointer-events: none;
+  }
+  
+  h1{
+  color: blue;
+  text-align    : center;
+  
+  }
+
+</style>
+<body style="background-color:beige">
+
+<h1>COVID-19 Claims Reimbursement to Health Care Providers and Facilities for Testing and Treatment of the Uninsured</h1>
+<p>President Trump is providing support to health care providers fighting the COVID-19 pandemic.</p>
+<h2>About the program</h2>
+<p>As part of the FFCRA, PPPHCEA, and CARES Act, the U.S. Department of Health and Human Services (HHS), will provide claims reimbursement to health care providers generally at Medicare rates for testing uninsured individuals for COVID-19 and treating uninsured individuals with a COVID-19 diagnosis.
+
+Physicians and other health care providers are true heroes – especially during the COVID-19 outbreak – and HHS is grateful for their continued dedication.</p>
+
+
+
+	
+<!-- load the d3.js library -->    	
+<script src="https://d3js.org/d3.v4.min.js"></script>
+
+<h3> To know which states have paid the most during Covid-19 <a href="page2.html">click here</a></h1>
+
+</div>
+
+
+
+   
+
+<script>
+
+
+function updateData()
+{
+d3.selectAll("svg").remove();
+// set the dimensions and margins of the graph
+var margin = {top: 20, right: 20, bottom: 30, left: 40},
+    width = 960 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
+
+// set the ranges
+var x = d3.scaleBand()
+          .range([0, width])
+          .padding(0.1);
+var y = d3.scaleLinear()
+          .range([height, 0]);
+          
+// append the svg object to the body of the page
+// append a 'group' element to 'svg'
+// moves the 'group' element to the top left margin
+var svg = d3.select("body").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", 
+          "translate(" + margin.left + "," + margin.top + ")");
+
+// get the data
+d3.csv("Claims_data.csv", function(error, data) {
+  if (error) throw error;
+
+  // format the data
+  data.forEach(function(d) {
+    d.Claims_Paid_for_Testing = +d.Claims_Paid_for_Testing;
+  });
+  
+  // Scale the range of the data in the domains
+  x.domain(data.map(function(d) { return d.State; }));
+  y.domain([0, 200000]);
+  
+
+
+  // append the rectangles for the bar chart
+  svg.selectAll(".bar")
+      .data(data)
+    .enter().append("rect")
+      .attr("class", "bar")
+      .attr("x", function(d) { return x(d.State); })
+      .attr("width", x.bandwidth())
+      .attr("y", function(d) { return y(d.Claims_Paid_for_Testing); })
+      .attr("height", function(d) { return height - y(d.Claims_Paid_for_Testing); }).order();
+
+  // add the x Axis
+  svg.append("g")
+      .attr("transform", "translate(0," + height + ")")
+      .call(d3.axisBottom(x));
+  
+	  d3.select("body").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", 300).append("g")
+      .attr("transform", "translate(450," + 25 + ")")
+	  .append("text").attr("font-family","Saira").text("Provider State")
+   
+
+  // add the y Axis
+  svg.append("g")
+      .call(d3.axisLeft(y));
+	  
+	 svg.append("text").attr("font-family","Helvetica-Bold-Oblique").text("Amt($)")
+	  
+	  
+  
+
+});
+}
+
+function ClaimTreatment()
+{
+d3.selectAll("svg").remove();
+// set the dimensions and margins of the graph
+var margin = {top: 20, right: 20, bottom: 30, left: 40},
+    width = 960 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
+
+// set the ranges
+var x = d3.scaleBand()
+          .range([0, width])
+          .padding(0.1);
+var y = d3.scaleLinear()
+          .range([height, 0]);
+          
+// append the svg object to the body of the page
+// append a 'group' element to 'svg'
+// moves the 'group' element to the top left margin
+var svg = d3.select("body").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", 
+          "translate(" + margin.left + "," + margin.top + ")");
+
+// get the data
+d3.csv("Claims_data.csv", function(error, data) {
+  if (error) throw error;
+
+  // format the data
+  data.forEach(function(d) {
+    d.Claims_Paid_for_Treatment = +d.Claims_Paid_for_Treatment;
+  });
+
+  // Scale the range of the data in the domains
+  x.domain(data.map(function(d) { return d.State; }));
+  y.domain([0, 200000]);
+  
+
+
+  // append the rectangles for the bar chart
+  svg.selectAll(".bar")
+      .data(data)
+    .enter().append("rect")
+      .attr("class", "bar")
+      .attr("x", function(d) { return x(d.State); })
+      .attr("width", x.bandwidth())
+      .attr("y", function(d) { return y(d.Claims_Paid_for_Treatment); })
+      .attr("height", function(d) { return height - y(d.Claims_Paid_for_Treatment); }).order();
+
+  // add the x Axis
+  svg.append("g")
+      .attr("transform", "translate(0," + height + ")")
+      .call(d3.axisBottom(x));
+
+   
+	  d3.select("body").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", 300).append("g")
+      .attr("transform", "translate(450," + 25 + ")")
+	  .append("text").attr("font-family","Saira").text("Provider State")
+   
+
+  // add the y Axis
+  svg.append("g")
+      .call(d3.axisLeft(y));
+	  
+	 svg.append("text").attr("font-family","Saira").text("Amt($)")
+	  
+	  
+  
+
+});
+}
+
+
+</script>
+</body>
